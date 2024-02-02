@@ -4,6 +4,12 @@ __pycache__
 .ipynb_checkpoints
 tests/*
 scripts/backup_*
+scripts/*.backup
 tmp
 tmp/*
+bin
+bin/*
+scripts/Plot_*v2021*
+scripts/Plot_*v2022*
+
 
