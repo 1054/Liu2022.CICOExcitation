@@ -13,6 +13,8 @@ from pprint import pprint, PrettyPrinter
 from scipy.interpolate import UnivariateSpline, interp1d
 import emcee
 import corner
+import warnings
+warnings.filterwarnings('ignore')
 
 # Level = namedtuple('Level', ['energy', 'weight', 'J', 'column_density'])
 # Transition = namedtuple('Transition', ['J_u', 'J_l', 'Einstein_A', 'Freq', 'E_u', 'tau_0', 'T_ex', 'P_lu', 'P_ul'])
@@ -438,6 +440,8 @@ class AtomMoleculeData():
         
         Dust optical depth = sigma * integral of dust volumetric density
                            = Q_abs * pi * a**2 * N_dust
+        
+        See Li & Draine 2001 (2001ApJ...554..778L) Table 6. Adapted the functional form. 
         """
         if beta is None:
             if lambda_um >= 700.0:
@@ -560,6 +564,7 @@ class AtomMoleculeData():
             Q = self.get_partition_function(T_ex)
             tau_0 = c**3 / (8.0*np.pi*nu**3) * (g_u / Q) * A_ul * species_column_density / (1.0645 * line_width) * \
                     (1.0 - np.exp(-(h * nu) / (k * T_ex))) * \
+                    np.exp(E_l / (k * T_ex)) * \
                     (u.Hz**0 * u.s**0)
                     # (1.0 - np.exp(-(h * nu) / (k * T_ex))) goes with g_u 
                     # because [ g_u * (1.0 - np.exp(-(h * nu) / (k * T_ex))) ] / Q == N_u / species_column_density
@@ -808,7 +813,7 @@ class AtomMoleculeData():
         global k
         global T_CMB0
         T_CMB = T_CMB0 * (1.0 + z)
-        DGR = 100.0 # dust-to-gas ratio
+        DGR = 100.0 # dust-to-gas ratio, not used because we do not consider dust emission's contribution to the source function
         # 
         Q = self.get_partition_function(T_kin)
         # 
